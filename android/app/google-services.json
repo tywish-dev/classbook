@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "263392941004",
+    "project_id": "classbook-3492f",
+    "storage_bucket": "classbook-3492f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:263392941004:android:c6f162f99f46323c914369",
+        "android_client_info": {
+          "package_name": "com.example.classbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCw-Pj4BhvZD2Yc8zGn1bWEkh_WadQEIiE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

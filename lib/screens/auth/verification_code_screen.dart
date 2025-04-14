@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/auth/auth_button.dart';
-import '../../widgets/auth/custom_text_field.dart';
-import 'reset_password_screen.dart';
+import 'login_screen.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
   final String email;
@@ -16,42 +15,7 @@ class VerificationCodeScreen extends StatefulWidget {
 }
 
 class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
-  final _codeController = TextEditingController();
-  bool _isLoading = false;
   bool _isResending = false;
-
-  @override
-  void dispose() {
-    _codeController.dispose();
-    super.dispose();
-  }
-
-  void _handleVerify() async {
-    if (_codeController.text.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.verifyResetCode(_codeController.text);
-
-    if (!mounted) return;
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (success) {
-      // Navigate to reset password screen
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const ResetPasswordScreen()),
-      );
-    }
-  }
 
   void _handleResend() async {
     setState(() {
@@ -72,6 +36,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     Navigator.pop(context);
   }
 
+  void _navigateToLogin() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +56,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
           onPressed: _navigateBack,
         ),
         title: Text(
-          'Giriş Yap',
+          'Şifre Sıfırlama',
           style: AppTextStyles.heading2.copyWith(fontSize: 16),
         ),
       ),
@@ -96,7 +68,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
               child: Text(
-                'Kodu Doğrula',
+                'E-posta Gönderildi',
                 style: AppTextStyles.heading1.copyWith(
                   fontSize: 32,
                   fontWeight: FontWeight.w500,
@@ -124,7 +96,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 children: [
                   // Instruction text
                   Text(
-                    "E-posta adresinize bir doğrulama kodu gönderildi.",
+                    "Şifre sıfırlama bağlantısı e-posta adresinize gönderildi. Lütfen e-posta kutunuzu kontrol edin ve bağlantıya tıklayarak şifrenizi sıfırlayın.",
                     style: AppTextStyles.body.copyWith(
                       color: AppColors.textWhite,
                     ),
@@ -132,69 +104,50 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
                   const SizedBox(height: 24),
 
-                  // Code field
-                  CustomTextField(
-                    hintText: 'Kodu Girin',
-                    controller: _codeController,
-                    keyboardType: TextInputType.number,
-                    onSubmitted: (_) => _handleVerify(),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Verify button
-                  AuthButton(
-                    text: 'Doğrula',
-                    onPressed: _handleVerify,
-                    isLoading: _isLoading,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  // Resend code
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Kod almadınız mı?",
-                        style: AppTextStyles.body.copyWith(
-                          color: AppColors.textWhite,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: _isResending ? null : _handleResend,
-                        child: Row(
-                          children: [
-                            if (_isResending)
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppColors.primaryGreen,
-                                  ),
-                                ),
-                              )
-                            else
-                              Icon(
-                                Icons.refresh,
-                                color: AppColors.primaryGreen,
-                                size: 16,
-                              ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Yeniden Gönder',
-                              style: AppTextStyles.body.copyWith(
-                                color: AppColors.primaryGreen,
-                                fontWeight: FontWeight.bold,
-                              ),
+                  // Email address
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.darkGrey,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.email, color: AppColors.textWhite),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            widget.email,
+                            style: AppTextStyles.body.copyWith(
+                              color: AppColors.textWhite,
                             ),
-                          ],
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Resend button
+                  AuthButton(
+                    text: 'Yeniden Gönder',
+                    onPressed: _isResending ? () {} : _handleResend,
+                    isLoading: _isResending,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Back to login
+                  TextButton(
+                    onPressed: _navigateToLogin,
+                    child: Text(
+                      'Giriş ekranına dön',
+                      style: AppTextStyles.body.copyWith(
+                        color: AppColors.primaryGreen,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants.dart';
 
-enum SocialProvider { google, facebook, apple }
+enum SocialProvider { google }
 
 class SocialButton extends StatelessWidget {
   final SocialProvider provider;
@@ -29,17 +29,9 @@ class SocialButton extends StatelessWidget {
           height: 24,
         );
         break;
-      case SocialProvider.facebook:
-        buttonText = 'Facebook ile Giriş Yap';
-        providerIcon = Icon(Icons.facebook, color: Colors.blue, size: 24);
-        break;
-      case SocialProvider.apple:
-        buttonText = 'Apple ile Giriş Yap';
-        providerIcon = Icon(Icons.apple, color: Colors.white, size: 24);
-        break;
     }
 
-    return SizedBox(
+    return Container(
       height: 48,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,

@@ -4,6 +4,7 @@ import '../widgets/book_card.dart';
 import '../widgets/bottom_navbar.dart';
 import '../widgets/category_pill.dart';
 import '../widgets/section_header.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -115,14 +116,24 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        Container(
-          width: 48,
-          height: 48,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.grey,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+            );
+          },
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey,
+            ),
+            child: Center(
+              child: Icon(Icons.person, color: Colors.grey.shade300),
+            ),
           ),
-          child: Center(child: Icon(Icons.person, color: Colors.grey.shade300)),
         ),
       ],
     );

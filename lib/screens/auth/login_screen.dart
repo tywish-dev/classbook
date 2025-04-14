@@ -61,12 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
       case SocialProvider.google:
         providerName = 'google';
         break;
-      case SocialProvider.facebook:
-        providerName = 'facebook';
-        break;
-      case SocialProvider.apple:
-        providerName = 'apple';
-        break;
     }
 
     final success = await authProvider.socialLogin(providerName);
@@ -188,23 +182,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Social logins
                   SocialButton(
-                    provider: SocialProvider.facebook,
-                    onPressed:
-                        () => _handleSocialLogin(SocialProvider.facebook),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  SocialButton(
                     provider: SocialProvider.google,
                     onPressed: () => _handleSocialLogin(SocialProvider.google),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  SocialButton(
-                    provider: SocialProvider.apple,
-                    onPressed: () => _handleSocialLogin(SocialProvider.apple),
                   ),
 
                   const SizedBox(height: 24),

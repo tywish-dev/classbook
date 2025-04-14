@@ -1,9 +1,18 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import '../models/user.dart';
 
 // This is a mock implementation of AuthService for demonstration purposes
 // In a real app, this would integrate with Firebase Auth or another authentication service
 class AuthService {
+  final firebase.FirebaseAuth _auth = firebase.FirebaseAuth.instance;
+
+  // Get current user
+  firebase.User? get currentUser => _auth.currentUser;
+
+  // Stream of auth state changes
+  Stream<firebase.User?> get authStateChanges => _auth.authStateChanges();
+
   // Mock user data
   final Map<String, User> _users = {
     'test@example.com': User(
@@ -28,91 +37,65 @@ class AuthService {
 
   // Login with email and password
   Future<User> login(String email, String password) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final userCredential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    email = email.toLowerCase();
-
-    if (!_users.containsKey(email)) {
-      throw Exception('User not found');
+      return User(
+        id: userCredential.user!.uid,
+        name: userCredential.user!.displayName ?? '',
+        email: email,
+      );
+    } catch (e) {
+      throw Exception('Failed to login: ${e.toString()}');
     }
-
-    // In a real app, we would check the password hash
-    // For demo purposes, any password is accepted
-
-    _currentUser = _users[email];
-    return _currentUser!;
   }
 
   // Sign up with email and password
   Future<User> signUp(String name, String email, String password) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    email = email.toLowerCase();
+      // Update display name
+      await userCredential.user?.updateDisplayName(name);
 
-    if (_users.containsKey(email)) {
-      throw Exception('Email already in use');
+      return User(id: userCredential.user!.uid, name: name, email: email);
+    } catch (e) {
+      throw Exception('Failed to sign up: ${e.toString()}');
     }
-
-    // Create new user
-    final newUser = User(
-      id: ((_users.length) + 1).toString(),
-      name: name,
-      email: email,
-    );
-
-    // Save user to mock database
-    _users[email] = newUser;
-    _currentUser = newUser;
-
-    return newUser;
   }
 
-  // Social login (Google, Facebook, Apple)
+  // Social login (Google)
   Future<User> socialLogin(String provider) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    // For demo purposes, create a new user or return existing one
-    final email = '$provider.user@example.com';
-
-    if (_users.containsKey(email)) {
-      _currentUser = _users[email]!;
-      return _currentUser!;
+    try {
+      // TODO: Implement Google Sign In
+      throw Exception('Google Sign In not implemented yet');
+    } catch (e) {
+      throw Exception('Failed to login with $provider: ${e.toString()}');
     }
-
-    // Create new user
-    final newUser = User(
-      id: ((_users.length) + 1).toString(),
-      name: '$provider User',
-      email: email,
-      photoUrl: 'assets/icons/auth/$provider.png',
-    );
-
-    // Save user to mock database
-    _users[email] = newUser;
-    _currentUser = newUser;
-
-    return newUser;
   }
 
   // Logout
   Future<void> logout() async {
-    await Future.delayed(const Duration(seconds: 1));
-    _currentUser = null;
+    try {
+      await _auth.signOut();
+    } catch (e) {
+      throw Exception('Failed to logout: ${e.toString()}');
+    }
   }
 
   // Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    email = email.toLowerCase();
-
-    if (!_users.containsKey(email)) {
-      throw Exception('User not found');
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw Exception('Failed to send reset email: ${e.toString()}');
     }
-
-    _resetEmail = email;
-    // In a real app, this would send an email
-    print('Password reset code: $_mockVerificationCode');
   }
 
   // Verify reset code
@@ -129,17 +112,11 @@ class AuthService {
 
   // Reset password
   Future<void> resetPassword(String newPassword) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (_resetEmail == null) {
-      throw Exception('No reset email set');
+    try {
+      await _auth.currentUser?.updatePassword(newPassword);
+    } catch (e) {
+      throw Exception('Failed to reset password: ${e.toString()}');
     }
-
-    // In a real app, this would update the password in the database
-    print('Password reset for $_resetEmail');
-
-    // Clear reset email
-    _resetEmail = null;
   }
 
   // Save user genre preferences

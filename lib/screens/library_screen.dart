@@ -39,16 +39,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     return Consumer<BookListProvider>(
       builder: (context, bookListProvider, child) {
-        // Loading state
-        if (bookListProvider.isLoading) {
-          return SafeArea(
-            child: Scaffold(
-              backgroundColor: AppColors.background,
-              body: const Center(child: CircularProgressIndicator()),
-            ),
-          );
-        }
-
         final lists = bookListProvider.lists;
 
         // Main content - match exactly the structure from HomeScreen
@@ -83,8 +73,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       ),
                     ),
 
-                    // Main Content
-                    lists.isEmpty
+                    // Loading or main content
+                    bookListProvider.isLoading
+                        ? SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                        : lists.isEmpty
                         ? SliverFillRemaining(
                           hasScrollBody: false,
                           child: _buildEmptyState(context),
@@ -101,7 +98,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
                         ),
 
                     // Bottom padding for navigation bar
-                    const SliverToBoxAdapter(child: SizedBox(height: 160)),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: BookNexusBottomNavBar.height + 8),
+                    ),
                   ],
                 ),
 
@@ -109,9 +108,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  child: BookNexusBottomNavBar(
-                    currentIndex: widget.selectedNavIndex,
-                    onTap: widget.onNavTap ?? (_) {},
+                  child: SafeArea(
+                    child: BookNexusBottomNavBar(
+                      currentIndex: widget.selectedNavIndex,
+                      onTap: widget.onNavTap ?? (_) {},
+                    ),
                   ),
                 ),
               ],

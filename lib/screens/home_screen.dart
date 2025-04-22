@@ -255,7 +255,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SliverToBoxAdapter(child: _buildApiBookList()),
                 const SliverToBoxAdapter(
-                  child: SizedBox(height: 160), // For bottom nav + now playing
+                  child: SizedBox(
+                    height: BookNexusBottomNavBar.height + 8,
+                  ), // Fixed height for bottom nav
                 ),
               ],
             ),

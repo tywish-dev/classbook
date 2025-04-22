@@ -6,6 +6,9 @@ class BookNexusBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
+  // Define a fixed height constant for the navigation bar
+  static const double height = 72.0;
+
   const BookNexusBottomNavBar({
     super.key,
     required this.currentIndex,
@@ -15,11 +18,11 @@ class BookNexusBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: height,
       decoration: const BoxDecoration(
         color: AppColors.background,
         border: Border(top: BorderSide(color: AppColors.darkGrey, width: 1)),
       ),
-      padding: const EdgeInsets.only(top: 14, bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -39,9 +42,10 @@ class BookNexusBottomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             icon is String
                 ? SvgPicture.asset(
@@ -59,20 +63,20 @@ class BookNexusBottomNavBar extends StatelessWidget {
                   color:
                       isSelected ? AppColors.primaryGreen : AppColors.textGrey,
                 ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Text(
               label,
               style: AppTextStyles.caption.copyWith(
                 color: isSelected ? AppColors.primaryGreen : AppColors.textGrey,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Container(
-              height: 4,
-              width: 32,
+              height: 3,
+              width: 24,
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.primaryGreen : Colors.transparent,
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ],

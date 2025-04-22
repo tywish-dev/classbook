@@ -102,9 +102,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavbar(
-        selectedIndex: widget.selectedNavIndex,
-        onTap: widget.onNavTap,
+      bottomNavigationBar: SafeArea(
+        child: BookNexusBottomNavBar(
+          currentIndex: widget.selectedNavIndex,
+          onTap: widget.onNavTap ?? (_) {},
+        ),
       ),
     );
   }

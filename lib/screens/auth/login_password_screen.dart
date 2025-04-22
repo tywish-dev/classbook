@@ -46,6 +46,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
     final success = await authProvider.login(
       widget.email,
       _passwordController.text,
+      context,
     );
 
     if (!mounted) return;

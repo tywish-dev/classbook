@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 import '../models/user.dart';
 import '../services/auth_service.dart';
+import 'book_list_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -81,13 +84,26 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Login with email and password
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(
+    String email,
+    String password,
+    BuildContext? context,
+  ) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
 
       await _authService.login(email, password);
+
+      // Initialize book list provider with the new user
+      if (context != null) {
+        final bookListProvider = Provider.of<BookListProvider>(
+          context,
+          listen: false,
+        );
+        bookListProvider.initialize(_currentUser?.id);
+      }
 
       _isLoading = false;
       notifyListeners();
@@ -152,12 +168,21 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Logout
-  Future<bool> logout() async {
+  Future<bool> logout(BuildContext? context) async {
     try {
       _isLoading = true;
       notifyListeners();
 
       await _authService.logout();
+
+      // Reset book list provider
+      if (context != null) {
+        final bookListProvider = Provider.of<BookListProvider>(
+          context,
+          listen: false,
+        );
+        bookListProvider.initialize(null);
+      }
 
       _currentUser = null;
       _isLoading = false;

@@ -98,7 +98,7 @@ class ProfileScreen extends StatelessWidget {
                   AuthButton(
                     text: 'Çıkış Yap',
                     onPressed: () async {
-                      final success = await authProvider.logout();
+                      final success = await authProvider.logout(context);
                       if (success && context.mounted) {
                         Navigator.pushAndRemoveUntil(
                           context,

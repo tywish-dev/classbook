@@ -26,31 +26,39 @@ class BookNexusBottomNavBar extends StatelessWidget {
           _buildNavItem(0, 'Ana Sayfa', 'assets/icons/home_icon.svg'),
           _buildNavItem(1, 'Keşfet', 'assets/icons/explore_icon.svg'),
           _buildNavItem(2, 'Kütüphane', 'assets/icons/library_icon.svg'),
+          _buildNavItem(3, 'Liderlik', Icons.emoji_events_outlined),
         ],
       ),
     );
   }
 
-  Widget _buildNavItem(int index, String label, String iconPath) {
+  Widget _buildNavItem(int index, String label, dynamic icon) {
     final isSelected = currentIndex == index;
 
     return GestureDetector(
       onTap: () => onTap(index),
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              iconPath,
-              height: 20,
-              width: 20,
-              colorFilter: ColorFilter.mode(
-                isSelected ? AppColors.primaryGreen : AppColors.textGrey,
-                BlendMode.srcIn,
-              ),
-            ),
+            icon is String
+                ? SvgPicture.asset(
+                  icon,
+                  height: 20,
+                  width: 20,
+                  colorFilter: ColorFilter.mode(
+                    isSelected ? AppColors.primaryGreen : AppColors.textGrey,
+                    BlendMode.srcIn,
+                  ),
+                )
+                : Icon(
+                  icon as IconData,
+                  size: 20,
+                  color:
+                      isSelected ? AppColors.primaryGreen : AppColors.textGrey,
+                ),
             const SizedBox(height: 10),
             Text(
               label,
@@ -70,6 +78,22 @@ class BookNexusBottomNavBar extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Simpler version for compatibility with existing code
+class BottomNavbar extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int)? onTap;
+
+  const BottomNavbar({super.key, required this.selectedIndex, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return BookNexusBottomNavBar(
+      currentIndex: selectedIndex,
+      onTap: onTap ?? ((_) {}),
     );
   }
 }

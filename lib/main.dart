@@ -7,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'auth_wrapper.dart';
 import 'constants.dart';
 import 'providers/auth_provider.dart';
+import 'providers/book_list_provider.dart';
+import 'providers/points_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -21,7 +23,11 @@ class BookNexusApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => BookListProvider()),
+        ChangeNotifierProvider(create: (_) => PointsProvider()),
+      ],
       child: MaterialApp(
         title: 'Book Nexus',
         debugShowCheckedModeBanner: false,

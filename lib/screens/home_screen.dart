@@ -11,11 +11,11 @@ import '../widgets/category_pill.dart';
 import '../widgets/section_header.dart';
 import 'profile_screen.dart';
 import 'book_detail_screen.dart';
-import '../widgets/search_bar.dart' as custom_search;
 import '../widgets/category_selector.dart';
 import '../models/book_model.dart';
 import 'library_screen.dart';
 import 'leaderboard_screen.dart';
+import 'search_screen.dart';
 
 // --- Open Library API Data Models ---
 class BookDoc {
@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const LibraryScreen(selectedNavIndex: 1),
+    const SearchScreen(selectedNavIndex: 1),
     const LibraryScreen(selectedNavIndex: 2),
     const LeaderboardScreen(selectedNavIndex: 3),
   ];
@@ -183,8 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // If index is not 0 (home), return the appropriate screen
     if (_selectedNavIndex != 0) {
       if (_selectedNavIndex == 1) {
-        // For now, library screen is used for exploration
-        return LibraryScreen(
+        return SearchScreen(
           selectedNavIndex: _selectedNavIndex,
           onNavTap: _onItemTapped,
         );
@@ -212,13 +211,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.all(16),
                   sliver: SliverToBoxAdapter(child: _buildHeader(user)),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  sliver: SliverToBoxAdapter(child: custom_search.SearchBar()),
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(

@@ -9,6 +9,7 @@ import 'constants.dart';
 import 'providers/auth_provider.dart';
 import 'providers/book_list_provider.dart';
 import 'providers/points_provider.dart';
+import 'providers/student_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -27,6 +28,7 @@ class BookNexusApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => BookListProvider()),
         ChangeNotifierProvider(create: (_) => PointsProvider()),
+        ChangeNotifierProvider(create: (_) => StudentProvider()),
       ],
       child: MaterialApp(
         title: 'Book Nexus',

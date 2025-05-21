@@ -22,6 +22,11 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
   bool _termsAccepted = false;
   String? _errorMessage;
+  String _selectedRole = 'student';
+  final List<Map<String, String>> _roles = [
+    {'label': 'Öğrenci', 'value': 'student'},
+    {'label': 'Öğretmen', 'value': 'teacher'},
+  ];
 
   @override
   void dispose() {
@@ -83,6 +88,7 @@ class _SignupScreenState extends State<SignupScreen> {
       _nameController.text,
       _emailController.text,
       _passwordController.text,
+      role: _selectedRole,
     );
 
     if (!mounted) return;
@@ -176,6 +182,33 @@ class _SignupScreenState extends State<SignupScreen> {
                     isPassword: true,
                     obscureText: _obscurePassword,
                     onToggleVisibility: _togglePasswordVisibility,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Role selector
+                  DropdownButtonFormField<String>(
+                    value: _selectedRole,
+                    decoration: InputDecoration(
+                      labelText: 'Kayıt Tipi',
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: Colors.black.withOpacity(0.1),
+                    ),
+                    items:
+                        _roles
+                            .map(
+                              (role) => DropdownMenuItem<String>(
+                                value: role['value'],
+                                child: Text(role['label']!),
+                              ),
+                            )
+                            .toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        _selectedRole = val ?? 'student';
+                      });
+                    },
                   ),
 
                   const SizedBox(height: 16),

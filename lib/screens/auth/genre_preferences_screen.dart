@@ -5,6 +5,7 @@ import '../../models/genre.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/auth/auth_button.dart';
 import '../home_screen.dart';
+import '../teacher_home_screen.dart';
 
 class GenrePreferencesScreen extends StatefulWidget {
   const GenrePreferencesScreen({super.key});
@@ -95,12 +96,20 @@ class _GenrePreferencesScreenState extends State<GenrePreferencesScreen> {
       });
 
       if (success) {
-        // Navigate to home screen
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-          (route) => false, // Remove all previous routes
-        );
+        final user = authProvider.currentUser;
+        if (user != null && user.role == 'teacher') {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const TeacherHomeScreen()),
+            (route) => false,
+          );
+        } else {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false, // Remove all previous routes
+          );
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

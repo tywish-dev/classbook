@@ -115,4 +115,42 @@ class PointsProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Mark task as completed and add points
+  Future<bool> completeTaskAndAddPoints(
+    String userId,
+    String userName,
+    String taskId,
+    String taskTitle, {
+    int pointsPerTask = 50,
+    String? photoUrl,
+  }) async {
+    try {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+
+      // Check if task is already completed
+      await _pointsService.completeTaskAndAddPoints(
+        userId,
+        userName,
+        taskId,
+        taskTitle,
+        pointsPerTask: pointsPerTask,
+        photoUrl: photoUrl,
+      );
+
+      // Update user's points data
+      await loadUserPointsData(userId);
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _isLoading = false;
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
 }

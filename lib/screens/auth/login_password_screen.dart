@@ -6,6 +6,7 @@ import '../../widgets/auth/auth_button.dart';
 import '../../widgets/auth/custom_text_field.dart';
 import '../../screens/home_screen.dart';
 import 'forgot_password_screen.dart';
+import '../../auth_wrapper.dart';
 
 class LoginPasswordScreen extends StatefulWidget {
   final String email;
@@ -56,10 +57,10 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
     });
 
     if (success) {
-      // Navigate to home screen
+      // Navigate to AuthWrapper (role-based home)
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(builder: (context) => const AuthWrapper()),
         (route) => false,
       );
     }

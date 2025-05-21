@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/leaderboard_model.dart';
+import 'badge_service.dart';
 
 class PointsService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -10,6 +11,10 @@ class PointsService {
 
   final CollectionReference _readBooksCollection = FirebaseFirestore.instance
       .collection('read_books');
+
+  final CollectionReference _completedTasksCollection = FirebaseFirestore
+      .instance
+      .collection('completed_tasks');
 
   // Add points to a user
   Future<void> addPoints(
@@ -39,6 +44,28 @@ class PointsService {
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
+      }
+
+      // Rozet kontrolü ve atama
+      final badgeService = BadgeService();
+      final totalPoints =
+          userPointsDoc.exists ? (userPointsDoc.get('points') as int? ?? 0) : 0;
+      final badges = await badgeService.getBadgesForPoints(totalPoints);
+      for (final badge in badges) {
+        // Kullanıcıda yoksa ata
+        final userBadgeSnapshot =
+            await FirebaseFirestore.instance
+                .collection('user_badges')
+                .doc(userId)
+                .collection('badges')
+                .doc(badge.id)
+                .get();
+        if (!userBadgeSnapshot.exists) {
+          await badgeService.assignBadgeToStudent(
+            studentId: userId,
+            badge: badge,
+          );
+        }
       }
     } catch (e) {
       throw Exception('Failed to add points: ${e.toString()}');
@@ -150,6 +177,44 @@ class PointsService {
       return (usersAboveQuery.count ?? 0) + 1;
     } catch (e) {
       throw Exception('Failed to get user ranking: ${e.toString()}');
+    }
+  }
+
+  // Mark a task as completed by a user and add points
+  Future<void> completeTaskAndAddPoints(
+    String userId,
+    String userName,
+    String taskId,
+    String taskTitle, {
+    int pointsPerTask = 50,
+    String? photoUrl,
+  }) async {
+    try {
+      // Check if task is already completed by this user
+      final completedTaskDoc =
+          await _completedTasksCollection
+              .where('userId', isEqualTo: userId)
+              .where('taskId', isEqualTo: taskId)
+              .limit(1)
+              .get();
+
+      if (completedTaskDoc.docs.isNotEmpty) {
+        // User has already completed this task
+        return;
+      }
+
+      // Mark task as completed
+      await _completedTasksCollection.add({
+        'userId': userId,
+        'taskId': taskId,
+        'taskTitle': taskTitle,
+        'completedAt': FieldValue.serverTimestamp(),
+      });
+
+      // Add points and check badges
+      await addPoints(userId, userName, pointsPerTask, photoUrl: photoUrl);
+    } catch (e) {
+      throw Exception('Failed to complete task: ${e.toString()}');
     }
   }
 }

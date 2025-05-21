@@ -31,6 +31,7 @@ class AuthProvider with ChangeNotifier {
             genrePreferences: List<String>.from(
               userDoc.data()?['genrePreferences'] ?? [],
             ),
+            role: userDoc.data()?['role'] ?? 'student',
           );
         } else {
           // If user doesn't exist in Firestore yet, use Firebase Auth data
@@ -118,7 +119,12 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Sign up with email and password
-  Future<bool> signUp(String name, String email, String password) async {
+  Future<bool> signUp(
+    String name,
+    String email,
+    String password, {
+    String role = 'student',
+  }) async {
     try {
       _isLoading = true;
       _error = null;
@@ -130,6 +136,7 @@ class AuthProvider with ChangeNotifier {
       await _firestore.collection('users').doc(user.id).set({
         'name': name,
         'email': email,
+        'role': role,
         'createdAt': FieldValue.serverTimestamp(),
       });
 

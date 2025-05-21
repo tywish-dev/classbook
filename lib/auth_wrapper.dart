@@ -4,6 +4,7 @@ import 'providers/auth_provider.dart';
 import 'providers/book_list_provider.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/teacher_home_screen.dart';
 
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
@@ -36,7 +37,12 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     // If logged in, show HomeScreen, otherwise show LoginScreen
     if (authProvider.isLoggedIn) {
-      return const HomeScreen();
+      final user = authProvider.currentUser;
+      if (user != null && user.role == 'teacher') {
+        return const TeacherHomeScreen();
+      } else {
+        return const HomeScreen();
+      }
     } else {
       return const LoginScreen();
     }
